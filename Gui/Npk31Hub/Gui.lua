@@ -526,3 +526,11 @@ Value_EspLine.MouseButton1Click:Connect(function()
 		end
 	end
 end)
+Value_EspHightLight.MouseButton1Click:Connect(function()
+	if (Value_EspHightLight.Text == 'OFF') then
+		Value_EspHightLight.Text = 'ON'
+		EspHightLight()
+	else
+		Value_EspHightLight.Text = 'ON'
+	end
+end)
