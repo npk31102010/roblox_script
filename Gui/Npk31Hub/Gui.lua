@@ -531,6 +531,6 @@ Value_EspHightLight.MouseButton1Click:Connect(function()
 		Value_EspHightLight.Text = 'ON'
 		EspHightLight()
 	else
-		Value_EspHightLight.Text = 'ON'
+		Value_EspHightLight.Text = 'OFF'
 	end
 end)
