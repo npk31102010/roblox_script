@@ -442,91 +442,23 @@ for i,v in ipairs(AllStatStyle) do
 end
 
 function EspHightLight()
-	local Players = game:GetService('Players')
-	local highlight = Instance.new('Highlight')
-	local RunService = game:GetService('RunService')
-	highlight.Name = 'Hightlight'
-	
-	for i,v in pairs(Players) do
-		repeat wait() until v.Character
-		if not v.Character:FindFirstChild('HumanoidRootPart'):FindFirstChild('Highlight') then
-			local highlightClone = highlight:Clone()
-			highlightClone.Adornee = v.Character
-			highlight.Parent = v.Character:FindFirstChild('HumanoidRootPart')
-			highlightClone.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-			highlightClone.Name = 'Highlight'
-		end
-	end
-	game.Players.PlayerAdded:Connect(function(player)
-		repeat wait() until player.Character
-		if not player.Character:FindFirstChild('HumanoidRootPart'):FindFirstChild('Highlight') then
-			local highlightClone = highlight:Clone()
-			highlightClone.Adornee = player.Character
-			highlight.Parent = player.Character:FindFirstChild('HumanoidRootPart')
-			highlightClone.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-			highlightClone.Name = 'Highlight'
-		end
-	end)
-	game.Players.PlayerRemoving:Connect(function(playerRemoved)
-		playerRemoved.Character:FindFirstChild('HumanoidRootPart').Highlight:Destroy()
-	end)
-	
-	RunService.Heartbeat:Connect(function()
-		for i,v in pairs(Players) do
-			repeat wait() until v.Character
-			if not v.Character:FindFirstChild('HumanoidRootPart'):FindFirstChild('Highlight') then
-			local highlightClone = highlight:Clone()
-			highlightClone.Adornee = v.Character
-			highlight.Parent = v.Character:FindFirstChild('HumanoidRootPart')
-			highlightClone.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-			highlightClone.Name = 'Highlight'
+	while wait(1) do
+		local players = game.Players:GetPlayers()
+		
+		for i,v in pairs(players) do
+		 local esp = Instance.new("Highlight")
+		 esp.Name = v.Name
+		 esp.FillTransparency = 0.5
+		 esp.FillColor = Color3.new(0, 0, 0)
+		 esp.OutlineColor = Color3.new(255, 255, 255)
+		 esp.OutlineTransparency = 0
+		 esp.Parent = v.Character
 		end
 		end
-	end)
 end
-Value_EspHightLight.MouseButton1Click:Connect(function()
-	if (Value_EspHightLight.Text == 'OFF') then
-		Value_EspHightLight.Text = 'ON'
-		EspHightLight()
-	else 
-		Value_EspHightLight.Text = 'OFF'
-		for i,v in pairs(game:GetService('Players')) do
-			v.Character:FindFirstChild('HumanoidRootPart').Highlight:Destroy()
-		end
-	end
-	
-end)
 
 function AimbotPlayer()
-	local UIS = game.UserInputService
-	local function getClosest()
-		local closestDistance = math.huge
-		local closestPlayer = nil
-		for i,v in pairs(game.Players:GetChildren()) do
-			if v ~= game.Players.LocalPlayer and v.Team ~= game.Players.LocalPlayer.Team then
-				local distance = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude
-				if distance < closestDistance then
-					closestDistance = distance
-					closestPlayer = v
-				end
-			end
-		end
-	end
-	UIS.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton2 then
-			_G.aim = true
-		end
-		while wait() do
-			local camera = game.CurrentCamera
-			camera.CFrame = CFrame.new(camera.Position, getClosest().Head.Position)
-			if _G.aim == false then return end
-		end
-	end)
-	UIS.InputEnded:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton2 then
-			_G.aim = false
-		end
-	end)
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/npk31102010/roblox_script/main/Gui/Npk31Hub/Aimbot.lua'))
 end
 
 Value_AimBot.MouseButton1Click:Connect(function()
@@ -540,70 +472,7 @@ Value_AimBot.MouseButton1Click:Connect(function()
 end)
 
 function SilentAim()
-	local plrs = game:GetService('Players')
-	local plr = plrs.LocalPlayer
-	local mouse = plr:GetMouse()
-	local camera = game:GetService('Workspace').CurrentCamera
-	local function notBehindWall(target)
-		local ray = Ray.new(plr.Character.Head.Position, (target.Position - plr.Character.Head.Position).Unit * 300)
-		local part = game:GetService('Workspace'):FindPartOnRayWithIgnoreList(ray, {plr.Character}, false, true)
-		if part then
-			local humanoid = part.Parent:FindFirstChildOfClass('Humanoid')
-			if not humanoid then
-				humanoid = part.Parent.Parent:FindFirstChildOfCLass('Humanoid')
-			end
-			if humanoid and target and humanoid.Parent == target.Parent then
-				local pos, visible = camera:WorldToScreenPoint(target.Position)
-				if visible then
-					return true
-				end
-			end
-		end
-	end
-	
-	local function getPlayerClosestToMouse()
-		local target = nil
-		local maxDist = 100
-		for _,v in pairs(plrs:GetPlayers()) do
-			if v.Character then
-				if v.Character:FindFirstChild('Humanoid') and v.Character.Humanoid.Health ~=0 and v.Character:FindFirstChild('HumanoidRootPart') and v.TeamColor ~= plr.TeamColor then
-					local pos, vis = camera:WorldToScreenPoint(v.Character.HumanoidRootPart.Position)
-					local dist = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(pos.X, pos.Y)).magnitude
-					if dist < maxDist and vis then
-						local torsoPos = camera:WorldToScreenPoint(v.Character.HumanoidRootPart.Position)
-						local torsoDist = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(torsoPos.X, torsoPos.Y)).magnitude
-						local headPos = camera:WorldToScreenPoint(v.Character.Head.Position)
-						local headDist = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(headPos.X, headPos.Y)).magnitude
-						if torsoDist > headDist then
-							if notBehindWall(v.Character.Head) then
-								target = v.Character.Head
-							end
-						else
-							if notBehindWall(v.Character.HumanoidRootPart) then
-								target = v.Character.HumanoidRootPart
-							end
-						end
-						maxDist = dist
-					end
-				end
-			end
-		end
-		return target
-	end
-	local gmt = getrawmetatable(game)
-	setreadonly(gmt,false)
-	local oldNamecall = gmt.__namecall
-	
-	gmt.__namecall = newcclosure(function(self, ...)
-		local Args = {...}
-		local method = getnamecallmethod()
-		if tostring(self) == 'HitPart' and tostring(method) == 'FireServer' then
-			Args[1] = getPlayerClosestToMouse()
-			Args[2] = getPlayerClosestToMouse().Position
-			return self.FireServer(self, unpack(Args))
-		end
-		return oldNamecall(self, ...)
-	end)
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/npk31102010/roblox_script/main/Gui/Npk31Hub/SilentAim.lua'))
 end
 
 Value_SilentAim.MouseButton1Click:Connect(function()
@@ -636,3 +505,16 @@ Value_WalkSpeed.MouseButton1Click:Connect(function()
 	end
 end)
 
+function EspLine()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/npk31102010/roblox_script/main/Gui/Npk31Hub/Traces.lua'))
+end
+
+Value_EspLine.MouseButton1Click:Connect(function()
+	if (Value_EspLine.Text == 'OFF') then
+		Value_EspLine.Text = 'ON'
+		EspLine()
+	else
+		Value_EspLine.Text = 'OFF'
+		OffWalkSpeed()
+	end
+end)
